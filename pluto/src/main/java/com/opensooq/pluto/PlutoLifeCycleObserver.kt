@@ -20,17 +20,17 @@ internal class PlutoLifeCycleObserver : LifecycleObserver {
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    internal    fun onResume() {
+    internal fun onResume() {
         this.actionHandler?.onResumed()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    internal  fun stop() {
+    internal fun stop() {
         this.actionHandler?.onDestroy()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    internal  fun onDestroy() {
+    internal fun onDestroy() {
         this.actionHandler?.onPause()
     }
 

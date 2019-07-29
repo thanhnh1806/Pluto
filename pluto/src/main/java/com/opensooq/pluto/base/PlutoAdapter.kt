@@ -9,9 +9,10 @@ import com.opensooq.pluto.listeners.OnItemClickListener
  * Created by Omar Altamimi on 28,April,2019
  */
 
-abstract class PlutoAdapter<T, VH : PlutoViewHolder<T>>(var items: MutableList<T>,
-                                                        private var mOnItemClickListener: OnItemClickListener<T>?) : RecyclerView.Adapter<VH>() {
-
+abstract class PlutoAdapter<T, VH : PlutoViewHolder<T>>(
+    var items: MutableList<T>,
+    private var mOnItemClickListener: OnItemClickListener<T>?
+) : RecyclerView.Adapter<VH>() {
 
     val realCount: Int
         get() = items.size

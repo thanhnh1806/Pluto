@@ -17,16 +17,18 @@ import com.opensooq.pluto.listeners.OnSlideChangeListener
 import com.opensooq.pluto.listeners.OnSnapPositionChangeListener
 import com.opensooq.pluto.listeners.SnapOnScrollListener
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.Experimental.Level
 
 /**
  * Created by Omar Altamimi on 28,April,2019
  */
 
-class PlutoView @JvmOverloads constructor(context: Context,
-                                          attrs: AttributeSet? = null, defStyleAttr: Int = R.attr.PlutoViewStyle) : FrameLayout(context, attrs, defStyleAttr), ViewActionHandler {
-
+class PlutoView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null, defStyleAttr: Int = R.attr.PlutoViewStyle
+) : FrameLayout(context, attrs, defStyleAttr), ViewActionHandler {
 
     private var rvSlider: RecyclerView?
     private var onSlideChangeListener: OnSlideChangeListener? = null
@@ -58,7 +60,8 @@ class PlutoView @JvmOverloads constructor(context: Context,
 
     private val mh = IncomingHandler(this)
     private fun setupAdapter() {
-        val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        val linearLayoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         linearLayoutManager.initialPrefetchItemCount = 4
         rvSlider?.layoutManager = linearLayoutManager
         rvSlider?.adapter = adapter
@@ -67,18 +70,24 @@ class PlutoView @JvmOverloads constructor(context: Context,
 
     init {
         View.inflate(getContext(), R.layout.layout_view_slider, this)
-        val attributes = context.theme.obtainStyledAttributes(attrs,
-                R.styleable.PlutoView,
-                defStyleAttr, 0)
+        val attributes = context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.PlutoView,
+            defStyleAttr, 0
+        )
 
         rvSlider = findViewById(R.id.rvSlider)
-        autoCycle = attributes.getBoolean(R.styleable.PlutoView_auto_cycle, true)
-        indicatorVisibility = attributes.getBoolean(R.styleable.PlutoView_indicator_visibility,
-                false)
+        autoCycle = attributes.getBoolean(R.styleable.PlutoView_pluto_view_auto_cycle, true)
+        indicatorVisibility = attributes.getBoolean(
+            R.styleable.PlutoView_pluto_view_indicator_visibility,
+            false
+        )
         rvSlider?.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
 
-            override fun onInterceptTouchEvent(recyclerView: RecyclerView,
-                                               motionEvent: MotionEvent): Boolean {
+            override fun onInterceptTouchEvent(
+                recyclerView: RecyclerView,
+                motionEvent: MotionEvent
+            ): Boolean {
                 val action = motionEvent.action
                 if (action == MotionEvent.ACTION_UP) {
                     recoverCycle()
@@ -86,13 +95,13 @@ class PlutoView @JvmOverloads constructor(context: Context,
                 return false
             }
 
-            override fun onTouchEvent(recyclerView: RecyclerView,
-                                      motionEvent: MotionEvent) {
-
+            override fun onTouchEvent(
+                recyclerView: RecyclerView,
+                motionEvent: MotionEvent
+            ) {
             }
 
             override fun onRequestDisallowInterceptTouchEvent(b: Boolean) {
-
             }
         })
 
@@ -110,16 +119,21 @@ class PlutoView @JvmOverloads constructor(context: Context,
                 currentPosition = position
                 adapter?.let {
 
-                    onSlideChangeListener?.onSlideChange(it,
-                            position % it.realCount)
+                    onSlideChangeListener?.onSlideChange(
+                        it,
+                        position % it.realCount
+                    )
                 }
-
             }
         })
     }
 
     @JvmOverloads
-    fun create(adapter: PlutoAdapter<*, *>, duration: Long = DEFAULT_DURATION, lifecycle: Lifecycle) {
+    fun create(
+        adapter: PlutoAdapter<*, *>,
+        duration: Long = DEFAULT_DURATION,
+        lifecycle: Lifecycle
+    ) {
         this.adapter = adapter
         plutoLifeCycleObserver.registerActionHandler(this)
         plutoLifeCycleObserver.registerLifecycle(lifecycle)
@@ -127,7 +141,6 @@ class PlutoView @JvmOverloads constructor(context: Context,
         this.duration = duration
         setIndicatorPosition(IndicatorPosition.CENTER_BOTTOM)
     }
-
 
     enum class IndicatorPosition(val position: String, val resourceId: Int) {
         CENTER_BOTTOM("CENTER_BOTTOM", R.id.default_center_bottom_indicator),
@@ -157,7 +170,6 @@ class PlutoView @JvmOverloads constructor(context: Context,
         }
     }
 
-
     private fun addScrollListener() {
         helper = PagerSnapHelper()
         rvSlider?.onFlingListener = null
@@ -173,14 +185,11 @@ class PlutoView @JvmOverloads constructor(context: Context,
 
     fun setOnSlideChangeListener(onSlideChangeListener: OnSlideChangeListener) {
         this.onSlideChangeListener = onSlideChangeListener
-
     }
-
 
     fun getDuration(): Long {
         return duration
     }
-
 
     /**
      * get the current item position
@@ -209,11 +218,9 @@ class PlutoView @JvmOverloads constructor(context: Context,
                 rvSlider?.smoothScrollToPosition(currentPosition)
             } else {
                 rvSlider?.scrollToPosition(currentPosition)
-
             }
 
         } ?: destroyPluto()
-
     }
 
     /**
@@ -230,7 +237,6 @@ class PlutoView @JvmOverloads constructor(context: Context,
         } else {
             rvSlider?.scrollToPosition(currentPosition)
         }
-
     }
 
     /**
@@ -259,8 +265,10 @@ class PlutoView @JvmOverloads constructor(context: Context,
      * @param autoRecover if recover after user touches the slider.
      */
     @JvmOverloads
-    fun startAutoCycle(duration: Long = this.duration,
-                       autoRecover: Boolean = this.autoRecover) {
+    fun startAutoCycle(
+        duration: Long = this.duration,
+        autoRecover: Boolean = this.autoRecover
+    ) {
 
         cycleTask?.cancel()
         cycleTimer?.cancel()
@@ -295,9 +303,7 @@ class PlutoView @JvmOverloads constructor(context: Context,
                 recoverCycle()
             }
         }
-
     }
-
 
     /**
      * when paused cycle, this method can wake it up.
@@ -388,7 +394,6 @@ class PlutoView @JvmOverloads constructor(context: Context,
         if (wasCycling) {
             recoverCycle()
         }
-
     }
 
     @DontUse
@@ -401,7 +406,6 @@ class PlutoView @JvmOverloads constructor(context: Context,
         destroyPluto()
     }
 
-
     companion object {
         private const val DELAY_TIME = 3000L
         private const val DEFAULT_DURATION = 4000L
@@ -409,5 +413,4 @@ class PlutoView @JvmOverloads constructor(context: Context,
 
     @Experimental(level = Level.ERROR)
     private annotation class DontUse
-
 }

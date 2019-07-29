@@ -15,13 +15,16 @@ import android.widget.LinearLayout
 import com.opensooq.pluto.base.PlutoAdapter
 import com.opensooq.pluto.listeners.OnSnapPositionChangeListener
 import com.opensooq.pluto.listeners.SnapOnScrollListener
-import java.util.*
+import java.util.ArrayList
 
 /**
  * Created by Omar Altamimi on 28,April,2019
  */
 
-class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, attrs: AttributeSet? = null) : LinearLayout(mContext, attrs) {
+class PlutoIndicator @JvmOverloads constructor(
+    private val mContext: Context,
+    attrs: AttributeSet? = null
+) : LinearLayout(mContext, attrs) {
 
     private var mRecyclerView: RecyclerView? = null
 
@@ -41,7 +44,6 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
     var unSelectedIndicatorResId: Int = 0
         private set
 
-
     /**
      * Custom unselected indicator style resource id.
      */
@@ -56,7 +58,6 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
     val isVisible = true
 
     internal var indicatorVisibility: Boolean = false
-
 
     private val mUnSelectedGradientDrawable: GradientDrawable
     private val mSelectedGradientDrawable: GradientDrawable
@@ -95,15 +96,20 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
 
     init {
 
-        val attributes = mContext.obtainStyledAttributes(attrs,
-                R.styleable.PlutoIndicator, 0, 0)
+        val attributes = mContext.obtainStyledAttributes(
+            attrs,
+            R.styleable.PlutoIndicator, 0, 0
+        )
 
-        indicatorVisibility = attributes.getBoolean(R.styleable.PlutoIndicator_visibility,
-                true)
+        indicatorVisibility = attributes.getBoolean(
+            R.styleable.PlutoIndicator_pluto_indicator_visibility,
+            true
+        )
 
-
-        val shape = attributes.getInt(R.styleable.PlutoIndicator_shape,
-                Shape.Oval.ordinal)
+        val shape = attributes.getInt(
+            R.styleable.PlutoIndicator_shape,
+            Shape.Oval.ordinal
+        )
         var indicatorShape = Shape.Oval
         for (s in Shape.values()) {
             if (s.ordinal == shape) {
@@ -112,47 +118,95 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
             }
         }
 
-        selectedIndicatorResId = attributes.getResourceId(R.styleable.PlutoIndicator_selected_drawable,
-                0)
-        unSelectedIndicatorResId = attributes.getResourceId(R.styleable.PlutoIndicator_unselected_drawable,
-                0)
+        selectedIndicatorResId = attributes.getResourceId(
+            R.styleable.PlutoIndicator_selected_drawable,
+            0
+        )
+        unSelectedIndicatorResId = attributes.getResourceId(
+            R.styleable.PlutoIndicator_unselected_drawable,
+            0
+        )
 
-        val defaultSelectedColor = attributes.getColor(R.styleable.PlutoIndicator_selected_color,
-                Color.rgb(255, 255, 255))
-        val defaultUnSelectedColor = attributes.getColor(R.styleable.PlutoIndicator_unselected_color,
-                Color.argb(33, 255, 255, 255))
+        val defaultSelectedColor = attributes.getColor(
+            R.styleable.PlutoIndicator_selected_color,
+            Color.rgb(255, 255, 255)
+        )
+        val defaultUnSelectedColor = attributes.getColor(
+            R.styleable.PlutoIndicator_unselected_color,
+            Color.argb(33, 255, 255, 255)
+        )
 
-        val defaultSelectedWidth = attributes.getDimension(R.styleable.PlutoIndicator_selected_width,
-                pxFromDp(6f).toInt().toFloat())
-        val defaultSelectedHeight = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_selected_height,
-                pxFromDp(6f).toInt()).toFloat()
+        val defaultSelectedWidth = attributes.getDimension(
+            R.styleable.PlutoIndicator_selected_width,
+            pxFromDp(6f).toInt().toFloat()
+        )
+        val defaultSelectedHeight = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_selected_height,
+            pxFromDp(6f).toInt()
+        ).toFloat()
 
-        val defaultUnSelectedWidth = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_unselected_width,
-                pxFromDp(6f).toInt()).toFloat()
-        val defaultUnSelectedHeight = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_unselected_height,
-                pxFromDp(6f).toInt()).toFloat()
+        val defaultUnSelectedWidth = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_unselected_width,
+            pxFromDp(6f).toInt()
+        ).toFloat()
+        val defaultUnSelectedHeight = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_unselected_height,
+            pxFromDp(6f).toInt()
+        ).toFloat()
 
         mSelectedGradientDrawable = GradientDrawable()
         mUnSelectedGradientDrawable = GradientDrawable()
 
-        val padding_left = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_padding_left,
-                pxFromDp(3f).toInt()).toFloat()
-        val padding_right = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_padding_right,
-                pxFromDp(3f).toInt()).toFloat()
-        val padding_top = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_padding_top,
-                pxFromDp(0f).toInt()).toFloat()
-        val padding_bottom = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_padding_bottom, pxFromDp(0f).toInt()).toFloat()
+        val padding_left = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_padding_left,
+            pxFromDp(3f).toInt()
+        ).toFloat()
+        val padding_right = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_padding_right,
+            pxFromDp(3f).toInt()
+        ).toFloat()
+        val padding_top = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_padding_top,
+            pxFromDp(0f).toInt()
+        ).toFloat()
+        val padding_bottom = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_padding_bottom,
+            pxFromDp(0f).toInt()
+        ).toFloat()
 
-        mSelectedPadding_Left = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_selected_padding_left, padding_left.toInt()).toFloat()
-        mSelectedPadding_Right = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_selected_padding_right, padding_right.toInt()).toFloat()
-        mSelectedPadding_Top = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_selected_padding_top,
-                padding_top.toInt()).toFloat()
-        mSelectedPadding_Bottom = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_selected_padding_bottom, padding_bottom.toInt()).toFloat()
+        mSelectedPadding_Left = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_selected_padding_left,
+            padding_left.toInt()
+        ).toFloat()
+        mSelectedPadding_Right = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_selected_padding_right,
+            padding_right.toInt()
+        ).toFloat()
+        mSelectedPadding_Top = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_selected_padding_top,
+            padding_top.toInt()
+        ).toFloat()
+        mSelectedPadding_Bottom = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_selected_padding_bottom,
+            padding_bottom.toInt()
+        ).toFloat()
 
-        mUnSelectedPadding_Left = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_unselected_padding_left, padding_left.toInt()).toFloat()
-        mUnSelectedPadding_Right = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_unselected_padding_right, padding_right.toInt()).toFloat()
-        mUnSelectedPadding_Top = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_unselected_padding_top, padding_top.toInt()).toFloat()
-        mUnSelectedPadding_Bottom = attributes.getDimensionPixelSize(R.styleable.PlutoIndicator_unselected_padding_bottom, padding_bottom.toInt()).toFloat()
+        mUnSelectedPadding_Left = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_unselected_padding_left,
+            padding_left.toInt()
+        ).toFloat()
+        mUnSelectedPadding_Right = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_unselected_padding_right,
+            padding_right.toInt()
+        ).toFloat()
+        mUnSelectedPadding_Top = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_unselected_padding_top,
+            padding_top.toInt()
+        ).toFloat()
+        mUnSelectedPadding_Bottom = attributes.getDimensionPixelSize(
+            R.styleable.PlutoIndicator_unselected_padding_bottom,
+            padding_bottom.toInt()
+        ).toFloat()
 
         mSelectedLayerDrawable = LayerDrawable(arrayOf<Drawable>(mSelectedGradientDrawable))
         mUnSelectedLayerDrawable = LayerDrawable(arrayOf<Drawable>(mUnSelectedGradientDrawable))
@@ -162,8 +216,10 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
         setIndicatorDrawableRes(selectedIndicatorResId, unSelectedIndicatorResId)
         setDefaultIndicatorShape(indicatorShape)
         setDefaultSelectedIndicatorSize(defaultSelectedWidth, defaultSelectedHeight, Unit.Px)
-        setDefaultUnselectedIndicatorSize(defaultUnSelectedWidth, defaultUnSelectedHeight,
-                Unit.Px)
+        setDefaultUnselectedIndicatorSize(
+            defaultUnSelectedWidth, defaultUnSelectedHeight,
+            Unit.Px
+        )
         setDefaultIndicatorColor(defaultSelectedColor, defaultUnSelectedColor)
         setVisibility(isVisible)
     }
@@ -178,8 +234,10 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
                 redraw()
             }
 
-            override fun onItemRangeChanged(positionStart: Int, itemCount: Int,
-                                            payload: Any?) {
+            override fun onItemRangeChanged(
+                positionStart: Int, itemCount: Int,
+                payload: Any?
+            ) {
                 redraw()
             }
 
@@ -224,7 +282,6 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
         }
         resetDrawable()
     }
-
 
     /**
      * Set Indicator style.
@@ -349,7 +406,7 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
     internal fun setRecyclerView(recyclerView: RecyclerView?, helper: SnapHelper) {
         mRecyclerView = recyclerView
         val adapter = mRecyclerView?.adapter
-                ?: throw IllegalStateException("Viewpager does not have adapter instance")
+            ?: throw IllegalStateException("Viewpager does not have adapter instance")
         mRecyclerView = recyclerView
         if (mDataObserver == null)
             initObserver()
@@ -362,7 +419,6 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
         snapOnScrollListener?.let {
             mRecyclerView?.addOnScrollListener(it)
         }
-
     }
 
     private fun initScrollListener(helper: SnapHelper, adapter: RecyclerView.Adapter<*>) {
@@ -379,12 +435,9 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
                 }
 
                 setItemAsSelected(snapPositon - 1)
-
-
             }
         })
     }
-
 
     private fun resetDrawable() {
         for (i in mIndicators) {
@@ -410,10 +463,12 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
         for (i in 0 until mItemCount) {
             val indicator = ImageView(mContext)
             indicator.setImageDrawable(mUnselectedDrawable)
-            indicator.setPadding(mUnSelectedPadding_Left.toInt(),
-                    mUnSelectedPadding_Top.toInt(),
-                    mUnSelectedPadding_Right.toInt(),
-                    mUnSelectedPadding_Bottom.toInt())
+            indicator.setPadding(
+                mUnSelectedPadding_Left.toInt(),
+                mUnSelectedPadding_Top.toInt(),
+                mUnSelectedPadding_Right.toInt(),
+                mUnSelectedPadding_Bottom.toInt()
+            )
             addView(indicator)
             mIndicators.add(indicator)
         }
@@ -424,10 +479,10 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
         mPreviousSelectedIndicator?.let {
             it.setImageDrawable(mUnselectedDrawable)
             it.setPadding(
-                    mUnSelectedPadding_Left.toInt(),
-                    mUnSelectedPadding_Top.toInt(),
-                    mUnSelectedPadding_Right.toInt(),
-                    mUnSelectedPadding_Bottom.toInt()
+                mUnSelectedPadding_Left.toInt(),
+                mUnSelectedPadding_Top.toInt(),
+                mUnSelectedPadding_Right.toInt(),
+                mUnSelectedPadding_Bottom.toInt()
             )
         }
         var currentSelected = getChildAt(position + 1)
@@ -435,13 +490,12 @@ class PlutoIndicator @JvmOverloads constructor(private val mContext: Context, at
             currentSelected = getChildAt(position + 1) as ImageView
             currentSelected.setImageDrawable(mSelectedDrawable)
             currentSelected.setPadding(
-                    mSelectedPadding_Left.toInt(),
-                    mSelectedPadding_Top.toInt(),
-                    mSelectedPadding_Right.toInt(),
-                    mSelectedPadding_Bottom.toInt()
+                mSelectedPadding_Left.toInt(),
+                mSelectedPadding_Top.toInt(),
+                mSelectedPadding_Right.toInt(),
+                mSelectedPadding_Bottom.toInt()
             )
             mPreviousSelectedIndicator = currentSelected
-
         }
         mPreviousSelectedPosition = position
     }
